@@ -151,11 +151,21 @@ allBtn.addEventListener("click", showAllGames);
 const descriptionContainer = document.getElementById("description-container");
 
 // use filter or reduce to count the number of unfunded games
-
+const unfundedGamesCount = GAMES_JSON.reduce((count, game) => {
+	return game.pledged < game.goal ? count + 1 : count;
+}, 0).toLocaleString("en-US");
 // create a string that explains the number of unfunded games using the ternary operator
-
+const unfundedString = `A total of ${
+	raisedCard.textContent
+} has been raised for ${gamesCard.textContent} game${
+	gamesCard.textContent > 1 ? "s" : ""
+}. Currently, ${unfundedGamesCount} ${
+	unfundedGamesCount < 1 ? "game remains" : "games remain"
+} unfunded. We need your help to fund these amazing games!`;
 // create a new DOM element containing the template string and append it to the description container
-
+const unfundedStringContainer = document.createElement("p");
+unfundedStringContainer.textContent = unfundedString;
+descriptionContainer.appendChild(unfundedStringContainer);
 /************************************************************************************
  * Challenge 7: Select & display the top 2 games
  * Skills used: spread operator, destructuring, template literals, sort
@@ -169,7 +179,46 @@ const sortedGames = GAMES_JSON.sort((item1, item2) => {
 });
 
 // use destructuring and the spread operator to grab the first and second games
+let [firstGame, secondGame, ...others] = sortedGames;
 
 // create a new element to hold the name of the top pledge game, then append it to the correct element
+let firstGameElement = document.createElement("p");
+firstGameElement.textContent = firstGame.name;
+firstGameContainer.appendChild(firstGameElement);
 
 // do the same for the runner up item
+let secondGameElement = document.createElement("p");
+secondGameElement.textContent = secondGame.name;
+secondGameContainer.appendChild(secondGameElement);
+
+//Add functionality for mode change
+const modeChangeButton = document.getElementById("mode-btn");
+const modeChange = () => {
+	const gameCards = document.querySelectorAll(".game-card");
+	gameCards.forEach((game) => {
+		if (game.style.backgroundColor != "black" && game.style.color != "white") {
+			game.style.backgroundColor = "black";
+			game.style.color = "white";
+		} else {
+			game.style.backgroundColor = "white";
+			game.style.color = "black";
+		}
+	});
+};
+modeChangeButton.addEventListener("click", modeChange);
+
+//Add alphabetic sort
+const alphaButton = document.getElementById("alpha-btn");
+const sortAlphabetically = () => {
+	const gameCards = Array.from(document.querySelectorAll(".game-card"));
+	const sortedGameCards = gameCards.sort((a, b) => {
+		const nameA = a.querySelector("h1").textContent.toLowerCase();
+		const nameB = b.querySelector("h1").textContent.toLowerCase();
+		return nameA.localeCompare(nameB);
+	});
+	deleteChildElements(gamesContainer);
+	sortedGameCards.forEach((gameCard) => {
+		gamesContainer.appendChild(gameCard);
+	});
+};
+alphaButton.addEventListener("click", sortAlphabetically);
