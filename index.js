@@ -39,22 +39,25 @@ function addGamesToPage(games) {
 	// between the end of the src attribute and the end of the tag ("/>")
 
 	// append the game to the games-container
-	for (let i = 0; i < games.length; i++) {
-		let gameCard = document.createElement("div");
-		let gameImage = document.createElement("img");
-		gameImage.src = games[i].img;
+
+	games.forEach((game) => {
+		const gameCard = document.createElement("div");
+		const gameImage = document.createElement("img");
+		const gameName = document.createElement("h1");
+		const gameDesc = document.createElement("p");
+
+		gameImage.src = game.img;
 		gameImage.classList.add("game-img");
-		let gameName = document.createElement("h1");
-		gameName.textContent = games[i].name;
-		let gameDesc = document.createElement("p");
-		gameDesc.textContent = games[i].description;
+		gameName.textContent = game.name;
+		gameDesc.textContent = game.description;
 		gameCard.classList.add("game-card");
+
 		gameCard.appendChild(gameImage);
 		gameCard.appendChild(gameName);
 		gameCard.appendChild(gameDesc);
-		gameCard.innerHTML;
+
 		gamesContainer.appendChild(gameCard);
-	}
+	});
 }
 addGamesToPage(GAMES_JSON);
 // call the function we just defined using the correct variable
@@ -68,6 +71,9 @@ addGamesToPage(GAMES_JSON);
 
 // grab the contributions card element
 const contributionsCard = document.getElementById("num-contributions");
+contributionsCard.textContent = GAMES_JSON.reduce((game, games) => {
+	return game + games.backers;
+}, 0).toLocaleString("en-US");
 
 // use reduce() to count the number of total contributions by summing the backers
 
@@ -75,12 +81,16 @@ const contributionsCard = document.getElementById("num-contributions");
 
 // grab the amount raised card, then use reduce() to find the total amount raised
 const raisedCard = document.getElementById("total-raised");
-
+raisedCard.textContent =
+	"$" +
+	GAMES_JSON.reduce((game, games) => {
+		return game + games.pledged;
+	}, 0).toLocaleString("en-US");
 // set inner HTML using template literal
 
 // grab number of games card and set its inner HTML
 const gamesCard = document.getElementById("num-games");
-
+gamesCard.textContent = GAMES_JSON.length.toLocaleString("en-US");
 /*************************************************************************************
  * Challenge 5: Add functions to filter the funded and unfunded games
  * total number of contributions, amount donated, and number of games on the site.
